@@ -21,12 +21,28 @@ for i in range(52):
     c.execute(p, (i + 1, suit, num, rank, suit + str(num) + ".png"))
 conn.commit()
 
-c.execute("SELECT * FROM card_set")
-
 deal_index = list(range(1, 53))
 random.shuffle(deal_index)
-print(deal_index)
+# print(deal_index)
 for i in deal_index:
     p = "SELECT * FROM card_set WHERE id=?"
     c.execute(p, (i,))
     print(c.fetchone())
+
+c.execute("DROP TABLE IF EXISTS player")
+c.execute("CREATE TABLE player(num, turn_num, name)")
+n = 5
+name_list = ["kp", "yamamii", "tamiya", "kudo", "takasu"]
+for i in range(n):
+    p = "INSERT INTO player(num, turn_num, name) VALUES(?, ?, ?)"
+    c.execute(p, (i, i, name_list[i]))
+
+
+c.execute("DROP TABLE IF EXISTS players_hand")
+c.execute("CREATE TABLE players_hand(num, hand)")
+hands_num = 3
+for i in range(n):
+    p = "INSERT INTO players_hand(num, hand) VALUES(?, ?)"
+    c.execute(p, (i, ))
+    print(c.fetchone())
+
