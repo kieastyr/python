@@ -1,56 +1,43 @@
 h, w, k = map(int, input().split())
 c = []
+w_count = []
+h_count = [0 for _ in range(w)]
+n = 0
 for _ in range(h):
-    c.append(list(map(int, input().split())))
-a_pos = []
-a_neg = []
-zero_count = 0
-for a in a_list:
-    if a > 0:
-        a_pos.append(a)
-    elif a < 0:
-        a_neg.append(a)
-    else:
-        zero_count += 1
+    tmp = list(input())
+    for i in range(w):
+        if tmp[i] == "#":
+            h_count[i] += 1
+    tc = tmp.count("#")
+    n += tc
+    w_count.append(tc)
+    c.append(tmp)
+# print(w_count, h_count)
 
-def nap(pi, rem, pos_i, neg_i, pos_max, neg_max):
-    if rem == 0:
-        return pi
-    ans1 = 0
-    ans2 = 0
-    if pos_i + 2 < pos_max:
-        tmp = pi * a_pos[pos_i] * a_pos[pos_i+1]
-        ans1 = nap(tmp, rem-2, pos_i-2, neg_i, pos_max, neg_max)
-    if neg_i + 2 < neg_max:
-        tmp = pi * a_neg[neg_i] * a_pos[neg_i+1]
-        ans2 = nap(tmp, rem-2, pos_i, neg_i-2, pos_max, neg_max)
-    return max(ans1, ans2)
+ans = 0
+for w_bin in range(2 ** w):
+    for h_bin in range(2 ** h):
+        w_bin_st = bin(w_bin)[2:].zfill(w)
+        h_bin_st = bin(h_bin)[2:].zfill(h)
+        # print(w_bin_st, h_bin_st)
+        num = 0
+        i_list = []
+        j_list = []
+        for i, wb in enumerate(list(w_bin_st)):
+            if wb == "1":
+                i_list.append(i)
+                num += h_count[i]
+        for j, hb in enumerate(list(h_bin_st)):
+            if hb == "1":
+                j_list.append(j)
+                num += w_count[j]
+        if n-num <= k:
+            for il in i_list:
+                for jl in j_list:
+                    if c[jl][il] == "#":
+                        num -= 1
+            if n-num == k:
+                # print(i_list, j_list)
+                ans += 1
 
-if len(a_pos) == 0 and k % 2 == 1:
-    if zero_count > 0:
-        print(0)
-    else:
-        ans = 1
-        a_neg.sort()
-        for i in range(k):
-            ans *= a_neg[i]
-            if ans > mod:
-                ans %= mod
-        print(ans)
-else:
-    a_pos.sort(reverse=True)
-    a_neg.sort()
-    if len(a_pos) >= k:
-        ans1 = 1
-        for i in range(k):
-            ans1 *= a_pos[i]
-            if ans1 > mod:
-                ans1 %= mod
-    else:
-        ans1 = 0
-    if k % 2 == 0:
-        ans2 = 0
-        for i in range(k):
-            ans1 *= a_pos[i]
-            if ans1 > mod:
-                ans1 %= mod
+print(ans)
