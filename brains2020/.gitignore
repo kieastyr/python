@@ -1,7 +1,3 @@
-# Default ignored files
-/shelf/
-/workspace.xml
-
 # dataset and submit data
 */dataset.csv
 *.zip
