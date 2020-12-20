@@ -1,53 +1,46 @@
 # import random
 # import time
-n, m = map(int, input().split())
-a = list(map(int, input().split()))
-b = list(map(int, input().split()))
-# n, m = 200000, 200000
-# a = [random.randint(-1000000000, 1000000000) for _ in range(n)]
-# b = a
-# xy = random.sample(range(20000000), m)
+mod = 998244353
+n, k = map(int, input().split())
+# n, k = 2*10**5, 300
+# a = [random.randint(1, int(1e8)) for _ in range(n)]
 # t1 = time.time()
-edge = {i+1:[] for i in range(n)}
-for i in range(m):
-    x, y = map(int, input().split())
-    # x = xy[i]%n + 1
-    # y = xy[i]//n + 1
-    # if x == y:
-    #     y += 1
-    edge[x].append(y)
-    edge[y].append(x)
+a = list(map(int, input().split()))
+a_pow = [[1 for _ in range(n)] for _ in range(k+1)]
+a_pow[1][:] = a
+x_fact = [1 for _ in range(k+1)]
+x_factinv = [1 for _ in range(k+1)]
+sum_apxf = [0 for _ in range(k+1)]
+sum_apxf[0] = n
+sum_apxf[1] = sum(a)
+sum_apap = [0 for _ in range(k+1)]
+sum_apap[0] = n
+sum_apap[1] = 2*sum(a)
 
-# print(edge)
+for i in range(2, k+1):
+    # a_pow[i][:] = list(map(lambda x, y: x*y%mod, a_pow[i], a))
+    a_pow[i] = [a_pow[i-1][j]*a[j]%mod for j in range(n)]
+    x_fact[i] = x_fact[i-1] * i % mod
+    x_factinv[i] = x_factinv[i-1] * pow(i, mod-2, mod) % mod
+    sum_apxf[i] = sum(a_pow[i]) * x_factinv[i] % mod
+    sum_apap[i] = pow(2, i, mod) * sum(a_pow[i]) % mod
 
-group = [0]*(n+1)
-g_num = 1
-start = 1
-ans = 1
-while True:
-    a_sum = 0
-    b_sum = 0
-    while start <= n and group[start] != 0:
-        start += 1
-    if start > n:
-        break
-    queue = {start}
-    while len(queue) > 0:
-        now = queue.pop()
-        group[now] = g_num
-        a_sum += a[now-1]
-        b_sum += b[now-1]
-        for next in edge[now]:
-            if group[next] == 0:
-                queue.add(next)
-    if a_sum != b_sum:
-        ans = 0
-        break
-    g_num += 1
+# print(a_pow)s
+# print(x_fact)
+# print(sum_apxf)
+# print(sum_apap)
 
-if ans == 1:
-    print("Yes")
-else:
-    print("No")
+for x in range(1, k+1):
+    ans = 0
+    for i in range(x+1):
+        ans += sum_apxf[i]*sum_apxf[x-i]
+        ans %= mod
+    ans *= x_fact[x]
+    ans %= mod
+    ans -= sum_apap[x]
+    ans %= mod
+    ans *= pow(2, mod-2, mod)
 
-# print(time.time()-t1)
+    print(ans % mod)
+
+# print(time.time() - t1)

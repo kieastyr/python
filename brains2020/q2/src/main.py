@@ -4,22 +4,29 @@ from sklearn.decomposition import PCA  # 主成分分析器
 import sys
 import pickle
 import pandas as pd
+import xgboost as xgb
+import warnings
 
-max_var = 7
+warnings.simplefilter('ignore', FutureWarning)
+max_var = 55
+eps = 1e-20
 
 
 def main():
     # 保存したモデルの読み込み
-    model = pickle.load(open("src/mymodel.pkl", "rb"))
+    model = xgb.XGBRegressor(random_state=17, silent=True)
+    model.load_model('src/mymodel.bin')
+    # model._le = xgb.compat.XGBLabelEncoder()
+    # model._le.fit(Y)  # YのラベルをLabelEncoderに学習させる
     
     # 標準入力からデータの読み込み
     input_data = []
     for line in sys.stdin:
         input_data.append(line.strip().split(","))
+
     df = pd.DataFrame(data=input_data[1:], columns=input_data[0])
-    df.info()
     # 標準化 -> pca
-    df_std = df.iloc[:, 2:10].apply(lambda x: (x - x.mean()) / x.std(), axis=0)
+    df_std = df.iloc[:, 2:102].astype(float).apply(lambda x: (x-x.mean())/(x.std()+eps), axis=0)
     pca = PCA()
     pca.fit(df_std)
     feature = pca.transform(df_std)

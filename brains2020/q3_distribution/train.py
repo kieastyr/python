@@ -6,10 +6,10 @@ def main():
     classifier = model.Classifier()
 
     # 学習データから学習用のデータを読み込む
-    with open('./data/smiles.txt', 'r', encoding='utf-8') as f_data:
+    with open('./sample/sample1.in', 'r', encoding='utf-8') as f_data:
         input_smiles = f_data.read().split("\n")
-    with open("./data/class.txt", "r", encoding="utf-8") as f_label:
-        input_label = f_label.read().split("\n")
+    with open("./sample/sample1.out", "r", encoding="utf-8") as f_label:
+        input_label = list(map(int, f_label.read().split("\n")))
     
     classifier.train(input_smiles, input_label)
 
