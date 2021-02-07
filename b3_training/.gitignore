@@ -1,4 +1,4 @@
 *.wav
 # *.mp3
-*_ans.ipynb
+# *_ans.ipynb
 demo*
