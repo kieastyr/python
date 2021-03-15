@@ -1,4 +1,5 @@
 *.wav
-# *.mp3
+*.mp3
+*.zip
 # *_ans.ipynb
 demo*
